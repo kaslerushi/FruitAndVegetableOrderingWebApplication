@@ -52,12 +52,6 @@ public class AdminController {
 		return new ResponseEntity<>(categoryService.deleteCategory(id), HttpStatus.OK);
 	}
 	
-//	@PutMapping("/categories/approve")
-//	public ResponseEntity<?> approveProduct(@RequestBody @Valid ProductApproval p) // de-serial (un marshalling) + apply validation rules
-//	{
-//		return new ResponseEntity<>(productService.approveProduct(p),HttpStatus.OK);
-//		
-//	}
 	
 	@GetMapping("/allProducts")
 	public ResponseEntity<?> getAllProductDetails() // de-serial (un marshalling) + apply validation rules
@@ -77,11 +71,6 @@ public class AdminController {
 		return new ResponseEntity<>(productService.approveProduct(p,id),HttpStatus.OK);
 	}
 	
-//	@PutMapping("/allProducts/editProduct/{id}")
-//	public ResponseEntity<?> editProduct(@RequestBody @Valid Product p,@PathVariable int id) // de-serial (un marshalling) + apply validation rules
-//	{
-//		return new ResponseEntity<>( HttpStatus.OK);
-//	}
 	
 	@DeleteMapping("/allProducts/delete/{id}")
 	public ResponseEntity<?> deleteProduct(@PathVariable int id) // de-serial (un marshalling) + apply validation rules

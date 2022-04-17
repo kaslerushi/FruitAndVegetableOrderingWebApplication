@@ -1,5 +1,4 @@
-import React, { useState,useEffect, useLayoutEffect, useRef } from "react";
-import { Link, Redirect, useHistory } from "react-router-dom";
+import React, { useState,useEffect } from "react";
 
 import '../../css/cart.css';
 import axios from "../../api/axios";
@@ -26,23 +25,17 @@ const Cart=()=>{
     });
        
     const [totalPrice, setTotalPrice] = useState();
-      
     const user=JSON.parse(localStorage.getItem("userDetails"));
-    let totalObj={};
     let total=0;
+
     useEffect(()=>{
         fetchCartItemsAtStart();
         fetchProducts();
-        console.log("in useeffect of products changing")
         const t1=JSON.parse(localStorage.getItem("totalAmount"))
-        console.log(t1)
         if(t1==null)
         {
            localStorage.setItem("totalAmount",JSON.stringify({total:0}))
         }else{
-            // tempResult=JSON.parse(localStorage.getItem("totalAmount"))
-            // console.log(tempResult)
-            // console.log(tempResult.total)
             setTotalPrice(t1.total)
         }
     },[])
@@ -50,23 +43,17 @@ const Cart=()=>{
     useEffect(()=>{
         setTotalPrice(total)
         let tempResult={total:total}
-        console.log(total)
-        console.log(tempResult)
         localStorage.setItem("totalAmount",JSON.stringify(tempResult))
         
     },[cartItems])
     
     const removeCartItem=(e)=>{
         const tempId=parseInt(e.target.id);
-        console.log("in delete method")
         const tempCartItems=cartItems.filter((c)=>c.pId!=tempId)
-        console.log(tempCartItems)
         localStorage.setItem("cart",JSON.stringify(tempCartItems))
         setCartItems(tempCartItems)
     }
     const fetchProducts = async()=>{
-            // setError('');
-            console.log("in products fetching")
             try{
                 const response=await axios.get('/customer/allProducts',{
                     auth: {
@@ -74,53 +61,37 @@ const Cart=()=>{
                         password:user.password
                       }
                     });
-                    console.log(response)
                     if(response && response?.data)
                     {
-                        console.log("in products got all products")
-                        console.log(response)
-                        console.log(response.data)
                         setProducts((await response.data))
-                        console.log(products.data)
-                        console.log(cartItems)
                     }
             }catch(err){
-                console.log("in error")
+                alert(err.response.data.message)
             }
         }
 
     const fetchCartItemsAtStart=()=>{
-        console.log('in fetch cartItems')
             let cart=(localStorage.getItem("cart"));
             if(cart!=null)
             {
              setCartItems(JSON.parse(cart));   
             }
-            console.log(cartItems)
     }
 
 const addQuantity=(e)=>{
-    console.log(cartItems)
     const tempqty=parseInt(e.target.id);
-    console.log(tempqty)
     cartItems.filter((p)=>p.pId==tempqty)
         .map(filteredProduct=>(filteredProduct.qty=filteredProduct.qty+1))
     localStorage.setItem("cart",JSON.stringify(cartItems))
-    console.log(cartItems)
     setCartItems(JSON.parse(localStorage.getItem("cart")))
-    console.log(cartItems)
 }
 
 const reduceQuantity=(e)=>{
-    console.log(cartItems)
     const tempqty=parseInt(e.target.id);
-    console.log(tempqty)
     cartItems.filter((p)=>p.pId===tempqty)
     .map(filteredProduct=>(filteredProduct.qty==1?filteredProduct.qty=1:filteredProduct.qty=filteredProduct.qty-1))
     localStorage.setItem("cart",JSON.stringify(cartItems))
-    console.log(cartItems)
     setCartItems(JSON.parse(localStorage.getItem("cart")))
-    console.log(cartItems)
 }
 
 
@@ -162,8 +133,7 @@ const reduceQuantity=(e)=>{
                                 .map(filteredProduct=>(<h6 key={filteredProduct.id}>{filteredProduct.pricePerUnitQty}</h6>))
                                 }
                             </td>
-                            <td>
-                                                    {/* setProduct({ ...product, [e.target.name]: e.target.value }); */}
+                            <td>          
                                 <div className="counter btn-group">
                                     <button className="btn btn-dark" id={c.pId} type="button" onClick={reduceQuantity}>-</button>
                                     <input  className="input-number" id={c.pId} type="text" value={cartItems.filter((p)=>p.pId===(c.pId))                    
@@ -192,9 +162,7 @@ const reduceQuantity=(e)=>{
                         <td></td>
                         <td></td>
                         <td><h4>TOTAL</h4></td>
-                        <td>
-                        <h4>{totalPrice}</h4>
-                        </td>
+                        <td> <h4>{totalPrice}</h4> </td>
                     </tr>
                     </tbody> 
                 </table>

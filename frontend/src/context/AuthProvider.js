@@ -8,10 +8,9 @@ import React, { createContext,useEffect,useLayoutEffect,useState } from 'react'
     const [loggedIn, setLoggedIn] = useState(false);
     const [startVisit, setStartVisit] = useState(true);
     const [role, setRole] = useState('');
-    const [cartLength, setCartLength] = useState(0);
+    // const [cartLength, setCartLength] = useState(0);
 
     useLayoutEffect(()=>{
-      console.log(auth,loggedIn,role,startVisit)
     },[auth,loggedIn,role,startVisit])
 
     return (

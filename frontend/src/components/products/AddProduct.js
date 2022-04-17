@@ -1,5 +1,4 @@
 import React, { useState,useEffect, useLayoutEffect, useRef } from "react";
-import Navbar from "../header/Navbar";
 import axios from "../../api/axios";
 import { useHistory } from "react-router-dom";
 import { useContext } from "react";
@@ -17,13 +16,13 @@ const AddProduct=()=>{
     const [variety, setVariety] = useState('');
     const [mainCategory, setMainCategory] = useState('');
     const [subCategory, setSubCategory] = useState('');
-    let categoriesList = useRef([]);
     const [mainCategories, setMainCategories] = useState([]);
     const [subCategories, setSubCategories] = useState([]);
     const [varieties, setVarieties] = useState([]);
     const [priceChecked, setPriceChecked] = useState(false);
     const [tempObj, setTempObj] = useState({});
-    const {loggedIn,role,startVisit,setLoggedIn,setRole,setStartVisit} = useContext(AuthContext);
+    const {role} = useContext(AuthContext);
+    let categoriesList = useRef([]);
     
     const user=JSON.parse(localStorage.getItem("userDetails"));
    
@@ -39,7 +38,6 @@ const AddProduct=()=>{
                 password:user.password
               }
       }).then((response)=>{
-        console.log(response)
         categoriesList.current=response.data;
         let result = categoriesList.current.map(c => c.mainCategory);
         let result1=result.filter((r,i)=>result.indexOf(r)===i)
@@ -49,7 +47,6 @@ const AddProduct=()=>{
     
     const handleSubCategories=(e)=>{
         setMainCategory(e.target.value)
-        setMessage('');
         setTotalQty(0);
         minQty=0;
         minPrice=0;
@@ -57,7 +54,6 @@ const AddProduct=()=>{
         let result=categoriesList.current.map((c)=>c.mainCategory===(e.target.value)?c.subCategory:'')
         result=result.filter((m,i)=>m!=='' && result.indexOf(m)==i)
         setSubCategories(result)
-        console.log(subCategories)
     }
 
     const handleVarieties=(e)=>{
@@ -73,14 +69,6 @@ const AddProduct=()=>{
             setVarieties([])
         }, [subCategories]);
 
-    // useLayoutEffect(() =>{
-    //     console.log(tempObj);
-    //     console.log(variety)
-    //     if(totalQty)
-    //     {
-    //         setMessage(`You will get ${totalQty*(tempObj.minPrice)} RS for this order with ${tempObj.minPrice} RS per ${tempObj.defUnit}`)        
-    //     }
-    // }, [variety]);
 
     const handleVariety=(e)=>{
         minQty=0;
@@ -95,7 +83,6 @@ const AddProduct=()=>{
         setTotalQty(minQty);
         minPrice=tempCategory.minSellPrice
         defUnit=tempCategory.defaultUnit
-        console.log(minQty,minPrice,defUnit)
         setTempObj({minQty,minPrice,defUnit})
         }
     }
@@ -111,21 +98,14 @@ const AddProduct=()=>{
     }
 
     useEffect(()=>{
-        console.log(variety)
-        console.log(totalQty)
         if(subCategory && variety && totalQty)
         {
             setMessage(`You will get ${totalQty*(tempObj.minPrice)} RS for this order with ${tempObj.minPrice} RS per ${tempObj.defUnit}`)       
-        }else{
-            setMessage('');
         }
-        
     },[totalQty,variety])
 
     const handlePrice=(e)=>{
         setTotalQty(e.target.value)
-        console.log(variety)
-        console.log(totalQty)
         if(variety && subCategory)
         {
             setMessage(`You will get ${totalQty*(tempObj.minPrice)} RS for this order with ${tempObj.minPrice} RS per ${tempObj.defUnit}`)       
@@ -136,12 +116,10 @@ const AddProduct=()=>{
 
     const handleSubmit=async(e)=>{
        e.preventDefault();
-       console.log(isOrganic)
         setMessage('')
         setError('');
         const email=user.email;
         const productInfo={mainCategory,subCategory,variety,productName,totalQty,isOrganic,email}
-        console.log(productInfo)
         try{
             const response=await axios.post('/farmer/addProduct',productInfo,{
                 auth: {
@@ -151,8 +129,6 @@ const AddProduct=()=>{
                 });
                 if(response && response?.data)
                 {
-                    console.log(response)
-                    console.log(response.data)
                     if(role=='ROLE_FARMER')
                     {
                         history.push("/FarmerHome")
@@ -163,7 +139,6 @@ const AddProduct=()=>{
                 }
         }catch(err){
             alert(err.response.data.message)
-            console.log("in error")
         }
     }
 
@@ -222,15 +197,13 @@ const AddProduct=()=>{
                         Organic
                     </label>
                 </div>
-                {/* <div className="form-check col-5 offset-3">
-                    <label ref={messageRef} className={message?"form-label success":"offscreen"}>{message}</label>
-                </div> */}
                 <div className="col-12 offset-3 divGapTop">
                     <button disabled={priceChecked===''|| mainCategory==='' || subCategory==='' || variety==='' || productName==='' || totalQty==0
                      || isOrganic==='' ?true:false} className="btn btn-primary submit" type="submit">Submit</button>
                 </div>
             </form>
             <p ref={errorRef} className={error?"col-5 offset-4 error":"offscreen"}> {error} </p>
+            <p ref={messageRef} className={message?"col-5 offset-4 success":"offscreen"}> {message} </p>
         </>
         
     );
@@ -238,13 +211,3 @@ const AddProduct=()=>{
                                                 
 export default AddProduct;
 
-
-
-
-
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         if()
-
-    //     }, 1500);
-    // }, []);

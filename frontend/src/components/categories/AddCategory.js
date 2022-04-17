@@ -5,7 +5,6 @@ import { useContext } from "react";
 
 // import AuthContext from "../context/AuthProvider";
 import axios from "../../api/axios";
-import Category from "./Category";
 
 const AddCategory =()=>{
     const history=useHistory()
@@ -25,53 +24,30 @@ const AddCategory =()=>{
         startRef.current.focus();
       },[])
 
-    // useEffect(()=>{
-    //     setMessage('')
-    //     setError('');
-    // },[mainCategory,subCategory,variety,defaultUnit,miniSellQty,minSellPrice])  
     const handleSubmit=async(e)=>{
        e.preventDefault();
         setMessage('')
         setError('');
-        console.log("in categories add")
         const categoryInfo={mainCategory,subCategory,variety,defaultUnit,miniSellQty,minSellPrice}
-        console.log(categoryInfo)
         const user=JSON.parse(localStorage.getItem("userDetails"));
         try{
-            console.log("in try start before axios")
             const response=await axios.post('/admin/addCategory',categoryInfo,{
                 auth: {
                     username:user.email,
                     password:user.password
                     }
                 });
-                console.log("after axios")
                 if(response && response?.data)
                 {
-                    console.log("in response")
-                    console.log("in categories add")
-                    console.log(response)
-                    console.log(response.data)
-                    // setMessage(response.data)/categoryList
                     history.push("/categoryList")
                 }
         }catch(err){
             alert(err.response.data.message)
-            console.log("in error")
-            // setError(err);
         }
     }
 
     return(
         <>
-        {/* <div className="col-3 offset-4">
-              <label htmlFor="email" className="form-label label">Email</label>
-                <input ref={startRef} type="text" placeholder='Enter Email-ID' className="form-control" id="email" 
-                      value={email} required onChange={(e)=>setEmail(e.target.value)}/>
-              </div> 
-              {mainCategory,subCategory,variety,defaultUnit,miniSellQty,minSellPrice}
-              */}
-            {/* form to be filled */}
             <form className="row g-3" onSubmit={handleSubmit}>
                 <div className="col-md-6 offset-2">
                     <label htmlFor="mainCategory" className="form-label">Main Category</label>

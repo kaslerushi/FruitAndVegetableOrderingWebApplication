@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ex</groupId>
-	<artifactId>backend1</artifactId>
+	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>backend1</name>
+	<name>backend</name>
 	<description>Spring Boot project as backend for Full Stack</description>
 	<properties>
 		<java.version>11</java.version>

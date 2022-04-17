@@ -2,7 +2,6 @@
   import { useState,useRef, useEffect } from 'react';
   import { Link } from 'react-router-dom';
   import axios from "../../api/axios";
-  import Select from 'react-select';
 
   const Register=()=>{
 
@@ -11,8 +10,6 @@
 
   const errorRef= useRef('');
   const startRef= useRef('');
-
- 
   const [role, setRole] = useState('ROLE_CUSTOMER');
 
   const [fname, setFname] = useState('');
@@ -61,22 +58,17 @@
 
   const handleSubmit = async(e) => {
       e.preventDefault();
-      
       const result=EMAIL_REGEX.test(email) && PWD_REGEX.test(password);
       if(!result) {
         setError('invalid email or password');
         errorRef.current.focus();
       } else {
         const userAccountCreate={fname,lname,email,password,role}
-        console.log(userAccountCreate);
         try{
-          const response=await axios.post("/api/register",userAccountCreate);
-          console.log(response?.data);
-          
+          await axios.post("/api/register",userAccountCreate);
           setSuccessful(true);
         }catch(err){
           alert(err.response.data.message)
-          console.log(err);
           setSuccessful(false);
           if(!err?.response){
             setError('No Server Response');

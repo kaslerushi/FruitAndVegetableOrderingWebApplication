@@ -14,7 +14,6 @@ import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import temporary.Country;
 
 @Entity
 @Table(name = "addresses")
@@ -35,7 +34,7 @@ public class Address extends BaseEntity{
 	
 	@NotEmpty(message="must provide country")
 	@Column(length = 20)
-	private Country country;
+	private String country;
 	
 	@NotBlank(message="must provide the zipcode")
 	@Column(length = 20)

@@ -6,11 +6,8 @@ import { useContext } from "react";
 import AuthContext from "../../context/AuthProvider";
 const Login=()=>{
 
-  const {loggedIn,role,startVisit,setLoggedIn,setRole,setStartVisit} = useContext(AuthContext);
+  const {loggedIn,setLoggedIn,setRole,setStartVisit} = useContext(AuthContext);
   const history=useHistory();  
-  
-  // const [userRole, setUserRole] = useState('ROLE_CUSTOMER');
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
@@ -22,10 +19,6 @@ const Login=()=>{
   useEffect(()=>{
     startRef.current.focus();
   },[])
-  useEffect(()=>{
-    console.log("loggedIN:",loggedIn);
-    console.log("first time for login page")
-    },[]);
 
   useEffect(()=>{
     setError('');
@@ -33,11 +26,7 @@ const Login=()=>{
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-    // console.log({role,email,password});
     try{
-      //  const user={email,password};
-      //const response=axios.post("/login",user);
-      
       const response=await axios.get('/api/login',{
             auth: {
                 username:email,
@@ -46,66 +35,43 @@ const Login=()=>{
         })
       if(response.status==200){
           const userinfo={email};
-          console.log(userinfo,email)
           const response1=await axios.post('/api/roles',userinfo,{
             auth: {
                 username:email,
                 password:password
               }
             });
-            console.log("hello")
-            console.log(response1);
             if(response1.status==200)
             {
-              console.log("got the roles")
-              console.log(response1);
-              console.log(response1.data);
               let user=response1.data;
-              console.log(user);
               user.password=password;
              localStorage.setItem("userDetails",JSON.stringify(user));
-             console.log("date set to localstorage");
              setLoggedIn(true);
-            console.log("date set to localstorage");
              setRole(response1.data.role);
-
-             console.log("role set to useContext")
              setStartVisit(false);
-             console.log("all context data set")
-             console.log(loggedIn,role,startVisit)
-            //  if(JSON.parse(localStorage.getItem("userDetails")).role==="ROLE_ADMIN")
             if(response1.data.role==="ROLE_ADMIN")
              {
-               console.log("admin role checking")
               history.replace("/AdminHome");
-              console.log("redirecting to ad role")
              }
              else if(response1.data.role==="ROLE_CUSTOMER")
              {
-              console.log("cust role checking")
-              history.replace("/CustomerHome");
-              console.log("redirecting to cu role")
+              history.replace("/");
              }
              else if(response1.data.role==="ROLE_FARMER"){
-              console.log("farmer role checking")
               history.replace("/FarmerHome");
-              console.log("redirecting to fa role")
              }
               
             }
             else{
-              console.log("in else")
               setError('dont have access to AdminLogin page')
             }
         }
         else{
-          console.log("login failed msg setting")
           setError('Login Failed');
         }
       
     }catch(err){
       alert(err.response.data.message)
-      console.log("in error")
       if(!err?.response){
         setError('No Server Response');
       }
@@ -145,7 +111,6 @@ const Login=()=>{
           </div>):(
             <div className="col-4 offset-4">
               <p ref={startRef}>Already Logged In</p>
-              {/* <Link to={localStorage.getItem.role==='ROLE_CUSTOMER'?'/CustomerHome':'/FarmerHome'}>Go to Home Page</Link> */}
             </div>
           )}
       </>
